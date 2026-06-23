@@ -1,0 +1,69 @@
+{
+  "_comment": "User-editable settings. These override the built-in defaults in src/config.py. Add firms or keywords here without touching code.",
+
+  "internship_terms": ["intern", "internship", "co-op", "coop", "summer analyst", "placement", "industrial placement"],
+
+  "keywords": [
+    "quant", "quantitative", "trading", "trader", "systematic", "market mak",
+    "market-mak", "derivativ", "hedge fund", "high frequency", "hft",
+    "algorithmic", "alpha research", "execution", "low latency", "low-latency"
+  ],
+
+  "known_firms": [
+    "jane street", "citadel", "two sigma", "hudson river", "hrt", "jump trading", "drw",
+    "imc", "optiver", "susquehanna", "sig ", "akuna", "five rings", "old mission",
+    "point72", "cubist", "belvedere", "wolverine", "chicago trading", "ctc trading",
+    "flow traders", "tower research", "squarepoint", "millennium", "balyasny", "walleye",
+    "pdt partners", "headlands", "quantlab", "radix", "virtu", "de shaw", "d. e. shaw",
+    "d.e. shaw", "aqr", "man group", "g-research", "marshall wace", "qube research",
+    "worldquant", "world quant", "voleon", "aquatic capital", "stevens capital",
+    "xtx", " tgs", "vatic", "five rings", "group one", "akros", "valkyrie", "ctc",
+    "maven securities", "qrt", "graham capital", "bridgewater", "renaissance",
+    "schonfeld", "verition", " explore-csm", "jane st"
+  ],
+
+  "greenhouse_boards": {
+    "IMC Trading": "imc",
+    "DRW": "drweng",
+    "Point72 / Cubist": "point72",
+    "Jump Trading": "jumptrading",
+    "Akuna Capital": "akunacapital",
+    "Old Mission Capital": "oldmissioncapital",
+    "Virtu Financial": "virtu",
+    "Tower Research Capital": "towerresearchcapital",
+    "PDT Partners": "pdtpartners",
+    "Optiver": "optiver"
+  },
+
+  "exclude_keywords": [
+    "trading card", "collectible", "networking event", "tax/accounting",
+    "tax intern", "accounting intern", "auditor", "barista", "retail sales",
+    "quantum"
+  ],
+
+  "lever_companies": {},
+
+  "github_listing_urls": [
+    "https://raw.githubusercontent.com/SimplifyJobs/Summer2026-Internships/dev/.github/scripts/listings.json",
+    "https://raw.githubusercontent.com/vanshb03/Summer2026-Internships/main/.github/scripts/listings.json",
+    "https://raw.githubusercontent.com/SimplifyJobs/Summer2027-Internships/dev/.github/scripts/listings.json",
+    "https://raw.githubusercontent.com/vanshb03/Summer2027-Internships/main/.github/scripts/listings.json"
+  ],
+
+  "us_undergrad_only": true,
+  "_us_undergrad_only_note": "When true, only roles with a US location and open to undergraduates (Bachelor's) are tracked. Set false to include international + PhD/Master's-only roles.",
+
+  "lookback_days": 400,
+  "dashboard_port": 5050,
+
+  "email": {
+    "enabled": false,
+    "_note": "Set enabled=true and fill these in to turn on email digests. For Gmail use an App Password (requires 2FA).",
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": 587,
+    "username": "",
+    "app_password": "",
+    "from": "william_smitas@brown.edu",
+    "to": "william_smitas@brown.edu"
+  }
+}

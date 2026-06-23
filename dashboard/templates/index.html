@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quant Internship Tracker</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c2330; --border:#2a3140;
+    --text:#e6e9ef; --muted:#9aa4b2; --faint:#6b7585;
+    --accent:#4f9cf9; --accent2:#34d399;
+    --trader:#f59e0b; --researcher:#a78bfa; --developer:#38bdf8; --data:#2dd4bf; --general:#94a3b8;
+    --urgent:#f87171; --soon:#fbbf24; --rolling:#64748b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  header{position:sticky;top:0;z-index:20;background:rgba(14,17,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:16px 24px}
+  .title{font-size:20px;font-weight:600;letter-spacing:.2px}
+  .title .accent{color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px;margin-top:2px}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .chip{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--muted)}
+  .chip b{color:var(--text);font-size:15px}
+  .chip.green b{color:var(--accent2)}
+  .btn{cursor:pointer;border:1px solid var(--border);background:var(--panel2);color:var(--text);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:500}
+  .btn:hover{background:#232c3b}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#06203f}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn[disabled]{opacity:.55;cursor:default}
+  .wrap{display:grid;grid-template-columns:1fr 340px;gap:22px;max-width:1320px;margin:22px auto;padding:0 24px}
+  @media(max-width:980px){.wrap{grid-template-columns:1fr}}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  input[type=search],select{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 11px;font-size:13px}
+  input[type=search]{flex:1;min-width:200px}
+  .tracks{display:flex;gap:6px;flex-wrap:wrap}
+  .tfilter{cursor:pointer;border:1px solid var(--border);background:var(--panel);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--muted)}
+  .tfilter.active{color:#06203f;background:var(--accent);border-color:var(--accent);font-weight:600}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+  .card.applied{opacity:.55}
+  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .company{font-size:13px;color:var(--muted);font-weight:500}
+  .jtitle{font-size:16px;font-weight:600;margin:2px 0 6px}
+  .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .b-trader{background:rgba(245,158,11,.16);color:var(--trader)}
+  .b-researcher{background:rgba(167,139,250,.16);color:var(--researcher)}
+  .b-developer{background:rgba(56,189,248,.16);color:var(--developer)}
+  .b-data{background:rgba(45,212,191,.16);color:var(--data)}
+  .b-general{background:rgba(148,163,184,.16);color:var(--general)}
+  .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--faint);margin-bottom:8px}
+  .meta i{font-style:normal}
+  .pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px}
+  .p-urgent{background:rgba(248,113,113,.15);color:var(--urgent)}
+  .p-soon{background:rgba(251,191,36,.15);color:var(--soon)}
+  .p-rolling{background:rgba(100,116,139,.18);color:#aab6c6}
+  .row2{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:8px}
+  .apply{display:flex;align-items:center;gap:14px}
+  .applybox{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer}
+  .prep-toggle{font-size:12px;color:var(--accent);cursor:pointer;user-select:none}
+  .prep{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:13px}
+  .prep.open{display:block}
+  .prep li{margin:5px 0;color:var(--muted)}
+  .prep b{color:var(--text)}
+  .side{align-self:start;position:sticky;top:96px}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+  .panel h3{margin:0 0 10px;font-size:15px}
+  .panel h3 .muted{color:var(--faint);font-weight:400;font-size:12px}
+  .check li{margin:7px 0;font-size:13px;color:var(--muted);list-style:none;position:relative;padding-left:22px}
+  .check li:before{content:"\2713";position:absolute;left:0;color:var(--accent2);font-weight:700}
+  .check{padding:0;margin:0}
+  .acc{border-top:1px solid var(--border);padding:10px 0}
+  .acc:first-child{border-top:none}
+  .acc summary{cursor:pointer;font-size:13px;font-weight:600;list-style:none;display:flex;justify-content:space-between}
+  .acc summary::-webkit-details-marker{display:none}
+  .acc .cnt{color:var(--faint);font-weight:400}
+  .acc ul{margin:8px 0 2px;padding-left:0}
+  .acc li{list-style:none;margin:8px 0;font-size:12.5px;color:var(--muted)}
+  .acc li b{color:var(--text)}
+  .acc li .res{color:var(--faint);font-size:11.5px}
+  .empty{color:var(--muted);text-align:center;padding:40px;border:1px dashed var(--border);border-radius:12px}
+  .count{color:var(--faint);font-size:12px;margin-bottom:8px}
+  footer{color:var(--faint);font-size:12px;text-align:center;padding:24px}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+    <div>
+      <div class="title"><span class="accent">Quant</span> Internship Tracker</div>
+      <div class="sub">{{ scope }} · auto-scanned every 6 hours · generated {{ generated }}</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button id="scanBtn" class="btn primary">Scan now</button>
+    </div>
+  </div>
+  <div class="chips">
+    <div class="chip"><b>{{ stats.total_active }}</b> active roles</div>
+    <div class="chip green"><b>{{ stats.new_last_7d }}</b> new this week</div>
+    {% if stats.last_run %}<div class="chip">last scan <b>{{ stats.last_run.ran_at[:16].replace('T',' ') }}</b> UTC</div>{% endif %}
+    {% set short = {'trader':'traders','researcher':'researchers','developer':'developers','data':'data','general':'other'} %}
+    {% for t in tracks %}{% if t.count %}<div class="chip"><b>{{ t.count }}</b> {{ short[t.key] }}</div>{% endif %}{% endfor %}
+  </div>
+</header>
+
+<div class="wrap">
+  <main>
+    <div class="controls">
+      <input id="search" type="search" placeholder="Search company, role, location..." />
+      <select id="sort">
+        <option value="new">Newest first</option>
+        <option value="deadline">Deadline soonest</option>
+        <option value="company">Company A–Z</option>
+      </select>
+      <select id="source">
+        <option value="">All sources</option>
+      </select>
+      <label class="applybox"><input type="checkbox" id="hideApplied" /> Hide applied</label>
+    </div>
+    <div class="tracks" id="tfilters">
+      <span class="tfilter active" data-track="">All tracks</span>
+      {% for t in tracks %}<span class="tfilter" data-track="{{ t.key }}">{{ t.label }}</span>{% endfor %}
+    </div>
+    <div class="count" id="count"></div>
+
+    <div id="list">
+      {% for o in opps %}
+      <div class="card{{ ' applied' if o.applied }}"
+           data-id="{{ o.id }}"
+           data-track="{{ o.category }}"
+           data-source="{{ o.source }}"
+           data-company="{{ o.company|e }}"
+           data-search="{{ o.search|e }}"
+           data-days="{{ o.days_ago if o.days_ago is not none else 9999 }}"
+           data-deadline="{{ o.deadline or '' }}"
+           data-applied="{{ '1' if o.applied else '0' }}">
+        <div class="top">
+          <div>
+            <div class="company">{{ o.company }}</div>
+            <div class="jtitle">{% if o.url %}<a href="{{ o.url }}" target="_blank" rel="noopener">{{ o.title }}</a>{% else %}{{ o.title }}{% endif %}</div>
+          </div>
+          <span class="badge b-{{ o.category }}">{{ o.track_label }}</span>
+        </div>
+        <div class="meta">
+          {% if o.location %}<i>&#128205; {{ o.location }}</i>{% endif %}
+          <i>&#128228; {{ o.source }}</i>
+          {% if o.days_ago is not none %}<i>&#128337; seen {{ 'today' if o.days_ago==0 else (o.days_ago|string)+'d ago' }}</i>{% endif %}
+          {% if o.date_posted %}<i>posted {{ o.date_posted }}</i>{% endif %}
+        </div>
+        <div class="row2">
+          <span class="deadline-slot" data-deadline="{{ o.deadline or '' }}"></span>
+          <div class="apply">
+            <span class="prep-toggle" data-track="{{ o.category }}">Prep tips ▾</span>
+            {% if o.url %}<a href="{{ o.url }}" target="_blank" rel="noopener">Apply ↗</a>{% endif %}
+            <label class="applybox"><input type="checkbox" class="applied-cb" {{ 'checked' if o.applied }}/> Applied</label>
+          </div>
+        </div>
+        <div class="prep"><ul style="margin:0;padding-left:18px"></ul></div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="empty" id="empty" style="display:none">No opportunities match your filters.</div>
+  </main>
+
+  <aside class="side">
+    <div class="panel">
+      <h3>Improve your chances <span class="muted">· general checklist</span></h3>
+      <ul class="check">
+        {% for item in checklist %}<li>{{ item }}</li>{% endfor %}
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Prep by track</h3>
+      {% for t in tracks %}
+      <details class="acc"{% if loop.first %} open{% endif %}>
+        <summary>{{ t.label }} <span class="cnt">{{ t.count }} role{{ '' if t.count==1 else 's' }}</span></summary>
+        <ul>
+          {% for area, action, res in t.tips %}
+          <li><b>{{ area }}:</b> {{ action }}<br><span class="res">→ {{ res }}</span></li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endfor %}
+    </div>
+  </aside>
+</div>
+
+<footer>Local tracker · data in <code>data/opportunities.db</code> · firms via Greenhouse/Lever APIs + SimplifyJobs aggregator</footer>
+
+<script>
+  window.TRACK_TIPS = {{ tracks|tojson }};
+</script>
+{% raw %}
+<script>
+(function(){
+  var tipsByKey = {};
+  (window.TRACK_TIPS||[]).forEach(function(t){ tipsByKey[t.key] = t; });
+
+  // Populate source dropdown from cards.
+  var sources = {};
+  document.querySelectorAll('.card').forEach(function(c){ sources[c.dataset.source]=1; });
+  var srcSel = document.getElementById('source');
+  Object.keys(sources).sort().forEach(function(s){
+    var o=document.createElement('option'); o.value=s; o.textContent=s; srcSel.appendChild(o);
+  });
+
+  // Deadline rendering.
+  function renderDeadlines(){
+    var now = new Date();
+    document.querySelectorAll('.deadline-slot').forEach(function(slot){
+      var raw = (slot.dataset.deadline||'').trim();
+      var card = slot.closest('.card');
+      if(!raw){
+        slot.innerHTML = '<span class="pill p-rolling">Rolling · apply early</span>';
+        card.dataset.dl = '99999999';
+        return;
+      }
+      var t = Date.parse(raw);
+      if(isNaN(t)){
+        slot.innerHTML = '<span class="pill p-soon">Deadline: '+raw+'</span>';
+        card.dataset.dl = '99999990';
+        return;
+      }
+      var days = Math.round((t - now)/86400000);
+      card.dataset.dl = String(t);
+      var cls = days<=14 ? 'p-urgent' : (days<=45 ? 'p-soon' : 'p-rolling');
+      var label = days<0 ? ('Closed '+(-days)+'d ago') : (days+'d left · '+raw);
+      slot.innerHTML = '<span class="pill '+cls+'">'+label+'</span>';
+    });
+  }
+
+  // Prep tips expansion.
+  document.querySelectorAll('.prep-toggle').forEach(function(tg){
+    tg.addEventListener('click', function(){
+      var card = tg.closest('.card');
+      var prep = card.querySelector('.prep');
+      var ul = prep.querySelector('ul');
+      if(!ul.dataset.filled){
+        var t = tipsByKey[tg.dataset.track];
+        if(t){ t.tips.slice(0,4).forEach(function(tip){
+          var li=document.createElement('li');
+          li.innerHTML='<b>'+tip[0]+':</b> '+tip[1];
+          ul.appendChild(li);
+        }); }
+        ul.dataset.filled='1';
+      }
+      prep.classList.toggle('open');
+      tg.textContent = prep.classList.contains('open') ? 'Prep tips ▴' : 'Prep tips ▾';
+    });
+  });
+
+  // Applied toggle -> persist.
+  document.querySelectorAll('.applied-cb').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var card = cb.closest('.card');
+      var applied = cb.checked;
+      card.classList.toggle('applied', applied);
+      card.dataset.applied = applied ? '1':'0';
+      fetch('/api/applied',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({id:card.dataset.id, applied:applied})}).then(function(){ applyFilters(); });
+    });
+  });
+
+  // Filtering + sorting.
+  var search=document.getElementById('search'), sortSel=document.getElementById('sort'),
+      hideApplied=document.getElementById('hideApplied'), countEl=document.getElementById('count'),
+      list=document.getElementById('list'), emptyEl=document.getElementById('empty');
+  var activeTrack='';
+
+  document.getElementById('tfilters').addEventListener('click', function(e){
+    var el=e.target.closest('.tfilter'); if(!el) return;
+    document.querySelectorAll('.tfilter').forEach(function(x){x.classList.remove('active');});
+    el.classList.add('active'); activeTrack=el.dataset.track; applyFilters();
+  });
+  [search,sortSel,srcSel,hideApplied].forEach(function(el){
+    el.addEventListener('input', applyFilters); el.addEventListener('change', applyFilters);
+  });
+
+  function applyFilters(){
+    var q=(search.value||'').toLowerCase().trim();
+    var src=srcSel.value, hide=hideApplied.checked;
+    var cards=[].slice.call(document.querySelectorAll('.card'));
+    var visible=0;
+    cards.forEach(function(c){
+      var ok = (!activeTrack || c.dataset.track===activeTrack)
+            && (!src || c.dataset.source===src)
+            && (!q || c.dataset.search.indexOf(q)>=0)
+            && (!hide || c.dataset.applied!=='1');
+      c.style.display = ok ? '' : 'none';
+      if(ok) visible++;
+    });
+    // Sort visible.
+    var key=sortSel.value;
+    cards.sort(function(a,b){
+      if(key==='company') return a.dataset.company.localeCompare(b.dataset.company);
+      if(key==='deadline') return (parseFloat(a.dataset.dl||9e15))-(parseFloat(b.dataset.dl||9e15));
+      return (parseInt(a.dataset.days)-parseInt(b.dataset.days));
+    });
+    cards.forEach(function(c){ list.appendChild(c); });
+    countEl.textContent = visible+' of '+cards.length+' roles shown';
+    emptyEl.style.display = visible? 'none':'block';
+  }
+
+  // Scan now.
+  var scanBtn=document.getElementById('scanBtn');
+  scanBtn.addEventListener('click', function(){
+    scanBtn.disabled=true; scanBtn.textContent='Scanning…';
+    fetch('/api/scan',{method:'POST'}).then(function(){ poll(); });
+  });
+  function poll(){
+    fetch('/api/scan/status').then(function(r){return r.json();}).then(function(s){
+      if(s.running){ setTimeout(poll, 3000); }
+      else { scanBtn.textContent='Done — reloading…'; setTimeout(function(){location.reload();}, 800); }
+    }).catch(function(){ setTimeout(function(){location.reload();}, 1500); });
+  }
+
+  renderDeadlines();
+  applyFilters();
+})();
+</script>
+{% endraw %}
+</body>
+</html>
