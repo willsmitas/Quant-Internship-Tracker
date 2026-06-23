@@ -13,6 +13,7 @@ import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(ROOT, "data")
 CONFIG_PATH = os.path.join(ROOT, "config.json")
+MANUAL_ROLES_PATH = os.path.join(ROOT, "manual_roles.json")
 DB_PATH = os.path.join(DATA_DIR, "opportunities.db")
 
 DEFAULTS = {

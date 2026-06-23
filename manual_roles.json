@@ -1,0 +1,38 @@
+{
+  "_comment": "Hand-curated roles for firms the automated sources don't cover (own careers sites like D. E. Shaw, Jane Street, Two Sigma, HRT, SIG, Citadel). These are merged into the dashboard AS-IS — the US / undergrad / Summer-2027+ filters are NOT applied, since you've already vetted them. Add or remove entries freely, then run a scan (or hit 'Scan now'). Only company, title, and url really matter; location/deadline/date_posted are optional (use null if unknown).",
+
+  "roles": [
+    {
+      "company": "D. E. Shaw Group",
+      "title": "Quantitative Analyst Intern (New York) – Summer 2027",
+      "location": "New York, NY",
+      "url": "https://www.deshaw.com/careers/quantitative-analyst-intern-new-york-summer-2027-5890",
+      "deadline": null,
+      "date_posted": null
+    },
+    {
+      "company": "D. E. Shaw Group",
+      "title": "Software Developer Intern (New York) – Summer 2027",
+      "location": "New York, NY",
+      "url": "https://www.deshaw.com/careers/software-developer-intern-new-york-summer-2027-5894",
+      "deadline": null,
+      "date_posted": null
+    },
+    {
+      "company": "Citadel Securities",
+      "title": "Quantitative Research Analyst Intern (BS/MS, US)",
+      "location": "New York, NY / Miami, FL",
+      "url": "https://www.citadelsecurities.com/careers/details/quantitative-research-analyst-intern-bs-ms-us/",
+      "deadline": null,
+      "date_posted": null
+    },
+    {
+      "company": "Citadel Securities",
+      "title": "Software Engineer Intern (US)",
+      "location": "New York, NY / Miami, FL",
+      "url": "https://www.citadelsecurities.com/careers/details/software-engineer-intern-us/",
+      "deadline": null,
+      "date_posted": null
+    }
+  ]
+}

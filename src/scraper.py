@@ -16,12 +16,14 @@ from __future__ import annotations
 import hashlib
 import html
 import json
+import os
 import re
 import time
 import urllib.request
 from datetime import datetime, timezone
 
 from . import suggestions
+from .config import MANUAL_ROLES_PATH
 
 UA = {"User-Agent": "Mozilla/5.0 (QuantInternshipTracker; personal job tracker)"}
 
@@ -330,6 +332,38 @@ def fetch_github_listings(cfg, log) -> list[dict]:
 
 
 # --------------------------------------------------------------------------- #
+# Source: hand-curated roles (manual_roles.json)
+# --------------------------------------------------------------------------- #
+def fetch_manual_roles(log) -> list[dict]:
+    """Roles added by hand for firms the automated sources don't cover (own
+    careers sites like D. E. Shaw, Jane Street, etc.). These are trusted as-is —
+    the US / undergrad / term filters are NOT applied, since you've vetted them.
+    """
+    out: list[dict] = []
+    if not os.path.exists(MANUAL_ROLES_PATH):
+        return out
+    try:
+        with open(MANUAL_ROLES_PATH, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (json.JSONDecodeError, OSError) as exc:
+        log(f"  [skip] manual_roles.json — {type(exc).__name__}: {str(exc)[:60]}")
+        return out
+    for r in data.get("roles", []):
+        if not isinstance(r, dict):
+            continue
+        company, title = r.get("company", ""), r.get("title", "")
+        if not company or not title:
+            continue
+        out.append(normalize(
+            company, title, r.get("url", ""), r.get("source", "Manual"),
+            r.get("location", ""), r.get("date_posted"),
+            r.get("description", ""), r.get("deadline"),
+        ))
+    log(f"  manual_roles.json — {len(out)} curated role(s)")
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # Orchestration
 # --------------------------------------------------------------------------- #
 def scrape_all(cfg, log=print) -> list[dict]:
@@ -355,6 +389,9 @@ def scrape_all(cfg, log=print) -> list[dict]:
 
     log("Scraping community internship aggregators...")
     add(fetch_github_listings(cfg, log))
+
+    log("Loading hand-curated roles...")
+    add(fetch_manual_roles(log))
 
     result = list(records.values())
     log(f"Total unique quant internships found this run: {len(result)}")

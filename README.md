@@ -11,13 +11,15 @@ Built for William Smitas (william_smitas@brown.edu).
 ## What it does
 
 - **Scans every 6 hours** via a Windows Scheduled Task (already installed).
-- Pulls from two kinds of sources, fail-soft (one source breaking never stops a run):
+- Pulls from three kinds of sources, fail-soft (one source breaking never stops a run):
   - **Company ATS APIs** (Greenhouse / Lever) for major quant firms: IMC, DRW,
     Point72 / Cubist, Jump Trading, Akuna, Old Mission, Virtu, Tower Research,
     PDT Partners, Optiver.
   - **Community internship aggregators** (SimplifyJobs + vanshb03 GitHub lists),
     filtered to quant/trading-relevant roles — this covers Citadel, SIG, Jane
     Street, Walleye, AQR, Radix, and many more that don't expose a public API.
+  - **Hand-curated roles** in `manual_roles.json` for own-site firms the APIs and
+    aggregators miss (e.g. D. E. Shaw) — see [Adding roles by hand](#adding-roles-by-hand).
 - **Filters to US, undergrad-eligible roles for Summer 2027+** — drops
   international-only postings, PhD/Master's-only roles, and any role for Summer 2026
   or earlier (toggle with `us_undergrad_only` / `min_intern_year` in `config.json`).
@@ -106,6 +108,31 @@ Edit **`config.json`** (no code changes needed) to tune what gets tracked:
 
 After editing, run a scan (or hit "Scan now") to apply.
 
+### Adding roles by hand
+
+Some firms (D. E. Shaw, Jane Street, Two Sigma, HRT, SIG, Citadel) post only on
+their own careers sites, which the automated sources can't read. Add those roles
+to **`manual_roles.json`** and they'll appear on the dashboard (source `Manual`),
+bypassing the auto-filters since you've already vetted them:
+
+```json
+{
+  "roles": [
+    {
+      "company": "D. E. Shaw Group",
+      "title": "Quantitative Analyst Intern (New York) – Summer 2027",
+      "location": "New York, NY",
+      "url": "https://www.deshaw.com/careers/quantitative-analyst-intern-new-york-summer-2027-5890",
+      "deadline": null
+    }
+  ]
+}
+```
+
+Only `company`, `title`, and `url` are required. Re-run a scan to apply. (The
+cloud backup routine also web-searches these own-site firms, so it can surface
+roles to copy in here.)
+
 ---
 
 ## Cloud backup routine
@@ -123,6 +150,7 @@ sidebar. Two things to know:
 
 ```
 config.json              # all user-tunable settings
+manual_roles.json        # hand-added roles for own-site firms (D. E. Shaw, etc.)
 requirements.txt
 src/
   config.py              # defaults + config.json loader
