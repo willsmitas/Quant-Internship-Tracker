@@ -44,11 +44,14 @@ DEFAULTS = {
         "Tower Research Capital": "towerresearchcapital",
         "PDT Partners": "pdtpartners",
         "Optiver": "optiver",
+        "Jane Street": "janestreet",
     },
     "exclude_keywords": [
         "trading card", "collectible", "networking event", "tax/accounting",
         "tax intern", "accounting intern", "auditor", "barista", "retail sales",
-        "quantum", "drug discovery", "material discovery",
+        "quantum", "drug discovery", "material discovery", "compliance",
+        "investor relations", "internal communication", "human resources",
+        "recruiter", "paralegal",
     ],
     "lever_companies": {},
     "github_listing_urls": [

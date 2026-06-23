@@ -332,6 +332,54 @@ def fetch_github_listings(cfg, log) -> list[dict]:
 
 
 # --------------------------------------------------------------------------- #
+# Source: D. E. Shaw careers site (server-rendered HTML, no public API)
+# --------------------------------------------------------------------------- #
+_DESHAW_ANCHOR_RE = re.compile(
+    r'<a[^>]+href="(/careers/[a-z0-9\-]+\-\d+)"[^>]*>(.*?)</a>', re.S
+)
+
+
+def fetch_deshaw(cfg, log) -> list[dict]:
+    """Scrape D. E. Shaw's careers page (deshaw.com/careers), which renders all
+    role links server-side. Each role's title/location come from the anchor text;
+    the usual internship / quant / US / undergrad / term filters then apply.
+    """
+    out: list[dict] = []
+    try:
+        page = _get("https://www.deshaw.com/careers", timeout=20).decode("utf-8", "ignore")
+    except Exception as exc:  # noqa: BLE001 - fail soft
+        log(f"  [skip] D. E. Shaw site — {type(exc).__name__}: {str(exc)[:60]}")
+        return out
+
+    seen, kept, total = set(), 0, 0
+    for href, inner in _DESHAW_ANCHOR_RE.findall(page):
+        if href in seen:
+            continue
+        seen.add(href)
+        total += 1
+        title = html.unescape(_TAG_RE.sub(" ", inner))
+        title = _WS_RE.sub(" ", title).replace("\n", " ").strip()
+        title = re.sub(r"^icon\s+", "", title, flags=re.IGNORECASE).split(" : ")[0].strip()
+        if not title:
+            continue
+        loc_m = re.search(r"\(([^)]+)\)", title)
+        loc = loc_m.group(1).strip() if loc_m else ""
+        if not is_internship(title, cfg):
+            continue
+        if not is_quant_relevant("D. E. Shaw Group", title, cfg):
+            continue
+        if not passes_us_undergrad(title, loc, None, cfg):
+            continue
+        if not passes_term_filter(title, None, cfg):
+            continue
+        out.append(normalize("D. E. Shaw Group", title,
+                             "https://www.deshaw.com" + href, "D. E. Shaw (site)", loc))
+        kept += 1
+    log(f"  D. E. Shaw site — {kept} role(s) of {total} listings")
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # Source: hand-curated roles (manual_roles.json)
 # --------------------------------------------------------------------------- #
 def fetch_manual_roles(log) -> list[dict]:
@@ -389,6 +437,9 @@ def scrape_all(cfg, log=print) -> list[dict]:
 
     log("Scraping community internship aggregators...")
     add(fetch_github_listings(cfg, log))
+
+    log("Scraping own-site firms...")
+    add(fetch_deshaw(cfg, log))
 
     log("Loading hand-curated roles...")
     add(fetch_manual_roles(log))
