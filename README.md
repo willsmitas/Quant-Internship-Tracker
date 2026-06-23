@@ -18,8 +18,11 @@ Built for William Smitas (william_smitas@brown.edu).
   - **Community internship aggregators** (SimplifyJobs + vanshb03 GitHub lists),
     filtered to quant/trading-relevant roles — this covers Citadel, SIG, Jane
     Street, Walleye, AQR, Radix, and many more that don't expose a public API.
-- **Filters to US, undergrad-eligible roles** — drops international-only postings
-  and PhD/Master's-only roles (toggle with `us_undergrad_only` in `config.json`).
+- **Filters to US, undergrad-eligible roles for Summer 2027+** — drops
+  international-only postings, PhD/Master's-only roles, and any role for Summer 2026
+  or earlier (toggle with `us_undergrad_only` / `min_intern_year` in `config.json`).
+- **Includes early-career discovery / insight programs**, not just roles titled
+  "intern".
 - **De-duplicates** and stores everything in `data/opportunities.db` (SQLite).
 - **Detects new postings** since the last run and writes a digest to
   `data/latest_digest.md` (+ a timestamped copy in `data/digests/`).
@@ -85,7 +88,8 @@ Edit **`config.json`** (no code changes needed) to tune what gets tracked:
 | `known_firms` | Firm names always treated as quant (so even a "SWE Intern" there is kept). |
 | `exclude_keywords` | Phrases that filter out noise (e.g. `trading card`, `quantum`). |
 | `us_undergrad_only` | `true` (default) keeps only US-located roles open to undergrads. Set `false` to also include international + PhD/Master's-only roles. |
-| `internship_terms` | Extra multi-word terms to count as an internship. |
+| `min_intern_year` | Keep only roles for this cycle year or later (default `2027` = after Summer 2026; Fall of the prior year still counts). Set to `null` to disable. Roles with no detectable year are kept. |
+| `internship_terms` | Title words that qualify a role — includes `discovery program` / `insight` variants so early-career programs are caught, not just "intern". |
 | `github_listing_urls` | Aggregator JSON feeds (bump to the Summer 2027 repo when it's live). |
 | `dashboard_port` | Port for the dashboard (default 5050). |
 

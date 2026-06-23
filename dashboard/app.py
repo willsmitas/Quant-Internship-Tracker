@@ -42,7 +42,12 @@ def _days_ago(iso: str | None):
 @app.route("/")
 def index():
     cfg = load_config()
-    scope = "US · undergrad-eligible" if cfg.get("us_undergrad_only", True) else "all roles"
+    scope_parts = []
+    if cfg.get("us_undergrad_only", True):
+        scope_parts.append("US · undergrad-eligible")
+    if cfg.get("min_intern_year"):
+        scope_parts.append(f"Summer {cfg['min_intern_year']}+")
+    scope = " · ".join(scope_parts) if scope_parts else "all roles"
     opps = database.get_opportunities(active_only=True)
     for o in opps:
         o["track_label"] = suggestions.label_for(o["category"])

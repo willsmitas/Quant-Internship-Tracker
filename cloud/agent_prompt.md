@@ -5,9 +5,10 @@ job is to independently sweep the web for **quant / trading internships** so tha
 nothing is missed if his PC is asleep. Keep it tight and factual.
 
 ## What to do
-1. Search the web for **newly posted (last ~4 days) internships** in quantitative
-   finance / trading / quant research / quant dev, including (but not limited to)
-   these firms:
+1. Search the web for **newly posted (last ~4 days) internships AND early-career
+   "discovery" / "insight" programs** (e.g. Citadel Discovery, SIG Discovery Day,
+   Akuna Discovery, Jane Street programs) in quantitative finance / trading / quant
+   research / quant dev, including (but not limited to) these firms:
    Jane Street, Citadel, Citadel Securities, Two Sigma, Hudson River Trading, Jump
    Trading, DRW, IMC, Optiver, SIG / Susquehanna, Akuna, Five Rings, Old Mission,
    Point72 / Cubist, Tower Research, PDT Partners, Virtu, Radix, Quantlab, Walleye,
@@ -20,8 +21,11 @@ nothing is missed if his PC is asleep. Keep it tight and factual.
 3. For each role capture: company, role title, location, application link, and any
    stated **application deadline** (note "rolling" if none).
 4. **Only include roles based in the United States that are open to undergraduates
-   (Bachelor's).** Exclude international-only postings and PhD-only / Master's-only
-   roles. Keep mixed-location roles if at least one location is in the US.
+   (Bachelor's).** Exclude international-only postings, and exclude any role that
+   requires a Master's or PhD (drop Master's-only / PhD-only roles). Keep
+   mixed-location roles if at least one location is in the US.
+5. **Only include roles for the Summer 2027 cycle or later** (i.e. after Summer
+   2026). Exclude anything for Summer 2026 or earlier. Fall 2026 counts as later.
 
 ## Output
 Produce a concise digest grouped by firm. Lead with a one-line count
