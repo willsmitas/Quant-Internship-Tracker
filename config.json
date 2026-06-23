@@ -54,16 +54,5 @@
   "_us_undergrad_only_note": "When true, only roles with a US location and open to undergraduates (Bachelor's) are tracked. Set false to include international + PhD/Master's-only roles.",
 
   "lookback_days": 400,
-  "dashboard_port": 5050,
-
-  "email": {
-    "enabled": false,
-    "_note": "Set enabled=true and fill these in to turn on email digests. For Gmail use an App Password (requires 2FA).",
-    "smtp_host": "smtp.gmail.com",
-    "smtp_port": 587,
-    "username": "",
-    "app_password": "",
-    "from": "william_smitas@brown.edu",
-    "to": "william_smitas@brown.edu"
-  }
+  "dashboard_port": 5050
 }

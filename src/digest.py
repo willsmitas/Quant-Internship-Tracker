@@ -1,8 +1,7 @@
 """Build human-readable digests of newly found opportunities.
 
-Since email delivery is currently disabled, the digest is the primary
-notification surface: each run writes a timestamped markdown file plus updates
-data/latest_digest.md (and an HTML version the email path can reuse later).
+The digest is the notification surface: each run writes a timestamped markdown
+file plus updates data/latest_digest.md.
 """
 from __future__ import annotations
 
@@ -55,25 +54,6 @@ def build_markdown(new_records: list[dict]) -> str:
     lines.append("---")
     lines.append("Open the dashboard for full details, deadlines, and prep suggestions.")
     return "\n".join(lines)
-
-
-def build_html(new_records: list[dict]) -> str:
-    """Minimal HTML version (used by the email path when enabled)."""
-    stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-    if not new_records:
-        return f"<h2>Quant Internship Digest — {stamp}</h2><p>No new opportunities this run.</p>"
-    parts = [f"<h2>Quant Internship Digest — {stamp}</h2>",
-             f"<p><b>{len(new_records)} new opportunities found.</b></p>"]
-    for track, items in _group_by_category(new_records).items():
-        parts.append(f"<h3>{suggestions.label_for(track)} ({len(items)})</h3><ul>")
-        for r in items:
-            loc = f" — {r['location']}" if r.get("location") else ""
-            dl = f" · <b>Deadline:</b> {r['deadline']}" if r.get("deadline") else ""
-            url = r.get("url", "")
-            link = f'<a href="{url}">{r["company"]}: {r["title"]}</a>' if url else f'{r["company"]}: {r["title"]}'
-            parts.append(f"<li>{link}{loc}{dl}</li>")
-        parts.append("</ul>")
-    return "\n".join(parts)
 
 
 def write_digest(new_records: list[dict]) -> str | None:

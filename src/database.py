@@ -2,7 +2,7 @@
 
 The DB is the source of truth for the dashboard. upsert_records() returns only
 the rows that were genuinely new this run (i.e. an id we'd never seen before),
-which is what feeds the digest / email.
+which is what feeds the digest.
 """
 from __future__ import annotations
 

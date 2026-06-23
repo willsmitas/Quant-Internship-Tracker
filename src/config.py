@@ -2,7 +2,7 @@
 
 Built-in DEFAULTS are merged with the user-editable config.json at the project
 root (config.json wins). This keeps a sane out-of-the-box setup while letting the
-user add firms / keywords / email settings without editing code.
+user add firms / keywords / settings without editing code.
 """
 from __future__ import annotations
 
@@ -54,15 +54,6 @@ DEFAULTS = {
     "us_undergrad_only": True,
     "lookback_days": 400,
     "dashboard_port": 5050,
-    "email": {
-        "enabled": False,
-        "smtp_host": "smtp.gmail.com",
-        "smtp_port": 587,
-        "username": "",
-        "app_password": "",
-        "from": "william_smitas@brown.edu",
-        "to": "william_smitas@brown.edu",
-    },
 }
 
 

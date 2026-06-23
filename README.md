@@ -28,9 +28,8 @@ Built for William Smitas (william_smitas@brown.edu).
 - **Cloud backup**: a Claude scheduled routine does the same web sweep every 6
   hours as redundancy in case your PC is asleep.
 
-Email delivery is **currently off** (your choice) — the digest files + dashboard
-are the notification surface. See [Enabling email](#enabling-email-later) to turn
-it on later.
+New opportunities surface in the dashboard and in the digest files
+(`data/latest_digest.md` + `data/digests/`).
 
 ---
 
@@ -94,30 +93,6 @@ After editing, run a scan (or hit "Scan now") to apply.
 
 ---
 
-## Enabling email later
-
-1. Generate a Gmail **App Password** (requires 2-step verification on your
-   Google account): https://myaccount.google.com/apppasswords
-2. In `config.json`, set the `email` block:
-   ```json
-   "email": {
-     "enabled": true,
-     "smtp_host": "smtp.gmail.com",
-     "smtp_port": 587,
-     "username": "your_gmail_address@gmail.com",
-     "app_password": "the-16-char-app-password",
-     "from": "your_gmail_address@gmail.com",
-     "to": "william_smitas@brown.edu"
-   }
-   ```
-   (Brown is Google Workspace; if app passwords are blocked by IT, use a personal
-   Gmail as the sender and keep `to` as your Brown address — or plug in any SMTP
-   provider's host/port/credentials.)
-3. The next scan that finds new roles will email them. Logic lives in
-   `src/notifier.py`; it's already wired into the run.
-
----
-
 ## Cloud backup routine
 
 A Claude scheduled task, **quant-internship-cloud-backup**, runs the same web
@@ -139,8 +114,7 @@ src/
   scraper.py             # Greenhouse/Lever + aggregator scraping, filtering
   database.py            # SQLite storage + new-opportunity detection
   suggestions.py         # role classification + prep suggestions
-  digest.py              # markdown/HTML digest builder
-  notifier.py            # email sender (off until configured)
+  digest.py              # markdown digest builder
   run.py                 # one scan cycle (entry point)
 dashboard/
   app.py                 # Flask dashboard server

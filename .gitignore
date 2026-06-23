@@ -7,7 +7,7 @@ __pycache__/
 .venv/
 venv/
 
-# Local secrets — if you add SMTP credentials, keep them out of git
+# Local overrides — keep machine-specific config out of git
 config.local.json
 
 # Local Claude Code tooling config (permission allowlist, preview launch config)

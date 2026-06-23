@@ -30,5 +30,4 @@ in the next 21 days as **URGENT**. Keep links clickable. No preamble, no fluff.
 
 ## Notes
 - This is redundant with the local scanner — duplicates are expected and fine.
-- Email is currently disabled. When William enables it, this digest should be sent
-  to william_smitas@brown.edu. Until then, the digest just appears in the run history.
+- The digest just appears in the run history.

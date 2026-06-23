@@ -4,7 +4,7 @@
     py src/run.py        (also works — see the path shim below)
 
 Flow: scrape all sources -> upsert into SQLite -> write a digest of any new
-opportunities -> (optionally) email them. Designed to be invoked every 6 hours
+opportunities. Designed to be invoked every 6 hours
 by Windows Task Scheduler; safe to run by hand any time.
 """
 from __future__ import annotations
@@ -24,10 +24,10 @@ for _stream in (sys.stdout, sys.stderr):
 # Allow `py src/run.py` by making the project root importable as a package parent.
 if __package__ in (None, ""):
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from src import database, digest, notifier, scraper  # type: ignore
+    from src import database, digest, scraper  # type: ignore
     from src.config import DATA_DIR, load_config  # type: ignore
 else:
-    from . import database, digest, notifier, scraper
+    from . import database, digest, scraper
     from .config import DATA_DIR, load_config
 
 LOG_PATH = os.path.join(DATA_DIR, "scan.log")
@@ -65,11 +65,6 @@ def main() -> int:
         digest_path = digest.write_digest(new_records)
         if digest_path:
             log(f"Digest written: {digest_path}")
-
-        if new_records:
-            html = digest.build_html(new_records)
-            subject = f"[Quant Tracker] {len(new_records)} new quant internship(s)"
-            notifier.send_digest_email(subject, html, cfg, log)
 
         stats = database.get_stats()
         log("-" * 64)
