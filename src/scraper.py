@@ -441,6 +441,13 @@ def scrape_all(cfg, log=print) -> list[dict]:
     log("Scraping own-site firms...")
     add(fetch_deshaw(cfg, log))
 
+    log("Scraping JS-only sites (headless browser)...")
+    try:
+        from .browser_scraper import fetch_browser_sources  # deferred: avoids import cycle
+        add(fetch_browser_sources(cfg, log))
+    except Exception as exc:  # noqa: BLE001 - never let the optional source break a scan
+        log(f"  [skip] browser sources — {type(exc).__name__}: {str(exc)[:60]}")
+
     log("Loading hand-curated roles...")
     add(fetch_manual_roles(log))
 

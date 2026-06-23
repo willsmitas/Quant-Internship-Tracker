@@ -59,6 +59,7 @@ DEFAULTS = {
     ],
     "us_undergrad_only": True,
     "min_intern_year": 2027,
+    "enable_browser_scraper": True,
     "lookback_days": 400,
     "dashboard_port": 5050,
 }

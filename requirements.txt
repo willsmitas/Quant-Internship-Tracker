@@ -4,3 +4,8 @@ flask>=3.0
 # Optional — only for the native desktop window (desktop.py / "Start Dashboard (App).bat").
 # The browser-based dashboard works without it.
 pywebview>=5.0
+
+# Optional — only for scraping JS-only career sites (Two Sigma) via a headless
+# browser. After installing, run: py -m playwright install chromium
+# Disable with "enable_browser_scraper": false in config.json if you don't want it.
+playwright>=1.40

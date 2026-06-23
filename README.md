@@ -11,17 +11,18 @@ Built for William Smitas (william_smitas@brown.edu).
 ## What it does
 
 - **Scans every 6 hours** via a Windows Scheduled Task (already installed).
-- Pulls from four kinds of sources, fail-soft (one source breaking never stops a run):
+- Pulls from five kinds of sources, fail-soft (one source breaking never stops a run):
   - **Company ATS APIs** (Greenhouse / Lever) for major quant firms: IMC, DRW,
     Point72 / Cubist, Jump Trading, Akuna, Old Mission, Virtu, Tower Research,
     PDT Partners, Optiver, Jane Street.
   - **Community internship aggregators** (SimplifyJobs + vanshb03 GitHub lists),
     filtered to quant/trading-relevant roles — covers SIG, Walleye, AQR, Radix,
     TransMarket, and many more that don't expose a public API.
-  - **Own-site scrapers** for firms with no public API — currently D. E. Shaw's
-    server-rendered careers page, re-checked every scan.
-  - **Hand-curated roles** in `manual_roles.json` for the remaining own-site firms
-    (e.g. Citadel) — see [Adding roles by hand](#adding-roles-by-hand).
+  - **Own-site HTML scraper** for D. E. Shaw's server-rendered careers page.
+  - **Headless-browser scraper** (optional, Playwright) for JS-only sites —
+    currently Two Sigma. See [Browser scraper](#browser-scraper-optional).
+  - **Hand-curated roles** in `manual_roles.json` for firms behind anti-bot
+    protection (Citadel) — see [Adding roles by hand](#adding-roles-by-hand).
 - **Filters to US, undergrad-eligible roles for Summer 2027+** — drops
   international-only postings, PhD/Master's-only roles, and any role for Summer 2026
   or earlier (toggle with `us_undergrad_only` / `min_intern_year` in `config.json`).
@@ -112,8 +113,8 @@ After editing, run a scan (or hit "Scan now") to apply.
 
 ### Adding roles by hand
 
-Some firms (Citadel, Two Sigma, HRT) post only on their own careers sites with no
-public API the tracker can read. (Jane Street and D. E. Shaw are scraped
+A few firms (Citadel, HRT) sit behind anti-bot protection or expose no API the
+tracker can read. (Jane Street, D. E. Shaw, and Two Sigma are scraped
 automatically — don't add those here.) Add the rest to **`manual_roles.json`** and
 they'll appear on the dashboard (source `Manual`), bypassing the auto-filters since
 you've already vetted them:
@@ -136,6 +137,21 @@ Only `company`, `title`, and `url` are required. Re-run a scan to apply. (The
 cloud backup routine also web-searches these own-site firms, so it can surface
 roles to copy in here.)
 
+### Browser scraper (optional)
+
+Two Sigma renders its jobs with JavaScript, so the tracker scrapes it with a
+headless browser (Playwright). This is optional and off the critical path — if
+Playwright isn't installed, the scan simply skips it. To enable:
+
+```powershell
+py -m pip install playwright
+py -m playwright install chromium
+```
+
+It adds ~20s per scan; turn it off with `"enable_browser_scraper": false` in
+`config.json`. (Citadel also renders via JS but sits behind Cloudflare anti-bot, so
+it can't be scraped reliably — keep Citadel roles in `manual_roles.json`.)
+
 ---
 
 ## Cloud backup routine
@@ -157,7 +173,8 @@ manual_roles.json        # hand-added roles for own-site firms (D. E. Shaw, etc.
 requirements.txt
 src/
   config.py              # defaults + config.json loader
-  scraper.py             # Greenhouse/Lever + aggregator scraping, filtering
+  scraper.py             # Greenhouse/Lever + aggregator + D. E. Shaw scraping, filtering
+  browser_scraper.py     # optional Playwright scraper for JS-only sites (Two Sigma)
   database.py            # SQLite storage + new-opportunity detection
   suggestions.py         # role classification + prep suggestions
   digest.py              # markdown digest builder
