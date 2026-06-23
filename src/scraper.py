@@ -103,7 +103,7 @@ def normalize(company, title, url, source, location="", date_posted=None,
 # Word-boundary match so "intern" does NOT fire on "INTERNational" / "INTERNal".
 _INTERN_RE = re.compile(
     r"\b(?:intern(?:ship)?s?|co-?op|summer\s+analyst|industrial\s+placement|"
-    r"placement|trainee)\b",
+    r"placement|trainee|discovery)\b",
     re.IGNORECASE,
 )
 
@@ -161,26 +161,49 @@ def is_us_location(location: str) -> bool:
     return any(code.upper() in _US_STATES for code in _STATE_RE.findall(location))
 
 
-def is_undergrad_eligible(title: str, degrees) -> bool:
-    """Exclude PhD/Master's-only roles. When the source lists eligible degrees
-    (the aggregator does), trust that; otherwise fall back to a title heuristic.
+def is_undergrad_eligible(title: str, degrees, description: str = "") -> bool:
+    """Keep roles open to undergraduates; drop Master's/PhD-only ones.
+
+    When the source lists eligible degrees (the aggregator does), that's
+    authoritative — keep only if Bachelor's is among them. Otherwise scan the
+    title + description: keep if it mentions Bachelor's/undergrad, drop if it
+    requires a Master's or PhD with no Bachelor's option.
     """
     if degrees:
         degs = [str(d).lower() for d in degrees]
         return any("bachelor" in d or "undergrad" in d for d in degs)
-    t = (title or "")
-    has_undergrad_word = "bachelor" in t.lower() or "undergrad" in t.lower()
-    if _PHD_RE.search(t) and not has_undergrad_word:
-        return False
-    if _MASTERS_RE.search(t) and not has_undergrad_word:
+    text = (title or "") + " " + (description or "")
+    low = text.lower()
+    if "bachelor" in low or "undergrad" in low:
+        return True
+    if _PHD_RE.search(text) or _MASTERS_RE.search(text):
         return False
     return True
 
 
-def passes_us_undergrad(title: str, location: str, degrees, cfg) -> bool:
+def passes_us_undergrad(title: str, location: str, degrees, cfg,
+                        description: str = "") -> bool:
     if not cfg.get("us_undergrad_only", True):
         return True
-    return is_us_location(location) and is_undergrad_eligible(title, degrees)
+    return is_us_location(location) and is_undergrad_eligible(title, degrees, description)
+
+
+def passes_term_filter(title: str, terms, cfg) -> bool:
+    """Keep only roles for an internship cycle in cfg['min_intern_year'] (default
+    2027) or later — i.e. after Summer 2026. Roles with no detectable year are
+    kept (a freshly posted role can't be for a summer that already started). The
+    Fall/Autumn of the prior year counts as "after" that year's summer.
+    """
+    min_year = cfg.get("min_intern_year")
+    if not min_year:
+        return True
+    blob = ((title or "") + " " + " ".join(terms or [])).lower()
+    years = [int(y) for y in re.findall(r"\b(20\d{2})\b", blob) if 2024 <= int(y) <= 2035]
+    if not years:
+        return True
+    if max(years) >= int(min_year):
+        return True
+    return f"fall {int(min_year) - 1}" in blob or f"autumn {int(min_year) - 1}" in blob
 
 
 # --------------------------------------------------------------------------- #
@@ -195,19 +218,21 @@ def fetch_greenhouse(name: str, token: str, cfg, log) -> list[dict]:
         return out
 
     jobs = listing.get("jobs", []) if isinstance(listing, dict) else []
-    interns = [
-        j for j in jobs
-        if is_internship(j.get("title", ""), cfg)
-        and is_quant_relevant(name, j.get("title", ""), cfg)
-        and passes_us_undergrad(j.get("title", ""),
-                                (j.get("location") or {}).get("name", ""), None, cfg)
-    ]
-    for job in interns:
+    candidates = []
+    for job in jobs:
         title = job.get("title", "")
         loc = (job.get("location") or {}).get("name", "")
+        if (is_internship(title, cfg)
+                and is_quant_relevant(name, title, cfg)
+                and passes_us_undergrad(title, loc, None, cfg)
+                and passes_term_filter(title, None, cfg)):
+            candidates.append((job, title, loc))
+
+    kept = 0
+    for job, title, loc in candidates:
         url = job.get("absolute_url", "")
         date_posted = (job.get("updated_at") or "")[:10] or None
-        description, deadline = "", None
+        description = ""
         # Pull detail for description + deadline (small number of intern roles).
         try:
             detail = _get_json(
@@ -217,10 +242,14 @@ def fetch_greenhouse(name: str, token: str, cfg, log) -> list[dict]:
             date_posted = (detail.get("updated_at") or date_posted or "")[:10] or date_posted
         except Exception:  # noqa: BLE001
             pass
+        # Final Master's/PhD-only check now that we have the full description.
+        if not is_undergrad_eligible(title, None, description):
+            continue
         out.append(normalize(name, title, url, f"Greenhouse:{name}", loc,
-                             date_posted, description, deadline))
+                             date_posted, description))
+        kept += 1
         time.sleep(0.05)
-    log(f"  Greenhouse:{name} — {len(interns)} intern role(s) of {len(jobs)} postings")
+    log(f"  Greenhouse:{name} — {kept} role(s) of {len(jobs)} postings")
     return out
 
 
@@ -278,13 +307,15 @@ def fetch_github_listings(cfg, log) -> list[dict]:
                 continue
             locs = e.get("locations") or []
             loc = ", ".join(locs) if isinstance(locs, list) else str(locs)
+            terms = e.get("terms") or []
             if not passes_us_undergrad(title, loc, e.get("degrees"), cfg):
+                continue
+            if not passes_term_filter(title, terms, cfg):
                 continue
             key = make_id(company, title)
             if key in seen_keys:
                 continue
             seen_keys.add(key)
-            terms = e.get("terms") or []
             term_str = ", ".join(terms) if isinstance(terms, list) else str(terms)
             out.append(normalize(
                 company, title, e.get("url", ""),

@@ -1,7 +1,7 @@
 {
   "_comment": "User-editable settings. These override the built-in defaults in src/config.py. Add firms or keywords here without touching code.",
 
-  "internship_terms": ["intern", "internship", "co-op", "coop", "summer analyst", "placement", "industrial placement"],
+  "internship_terms": ["intern", "internship", "co-op", "coop", "summer analyst", "placement", "industrial placement", "discovery program", "discovery day", "early insight", "insight program", "insight day"],
 
   "keywords": [
     "quant", "quantitative", "trading", "trader", "systematic", "market mak",
@@ -38,7 +38,7 @@
   "exclude_keywords": [
     "trading card", "collectible", "networking event", "tax/accounting",
     "tax intern", "accounting intern", "auditor", "barista", "retail sales",
-    "quantum"
+    "quantum", "drug discovery", "material discovery"
   ],
 
   "lever_companies": {},
@@ -52,6 +52,9 @@
 
   "us_undergrad_only": true,
   "_us_undergrad_only_note": "When true, only roles with a US location and open to undergraduates (Bachelor's) are tracked. Set false to include international + PhD/Master's-only roles.",
+
+  "min_intern_year": 2027,
+  "_min_intern_year_note": "Only keep roles for this internship cycle year or later (i.e. after the prior summer). Roles with no detectable year are kept. Set to null to disable.",
 
   "lookback_days": 400,
   "dashboard_port": 5050

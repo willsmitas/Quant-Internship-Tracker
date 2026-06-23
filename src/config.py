@@ -18,6 +18,8 @@ DB_PATH = os.path.join(DATA_DIR, "opportunities.db")
 DEFAULTS = {
     "internship_terms": [
         "intern", "internship", "co-op", "coop", "summer analyst", "placement",
+        "discovery program", "discovery day", "early insight", "insight program",
+        "insight day",
     ],
     "keywords": [
         "quant", "quantitative", "trading", "trader", "systematic", "market mak",
@@ -45,13 +47,14 @@ DEFAULTS = {
     "exclude_keywords": [
         "trading card", "collectible", "networking event", "tax/accounting",
         "tax intern", "accounting intern", "auditor", "barista", "retail sales",
-        "quantum",
+        "quantum", "drug discovery", "material discovery",
     ],
     "lever_companies": {},
     "github_listing_urls": [
         "https://raw.githubusercontent.com/SimplifyJobs/Summer2026-Internships/dev/.github/scripts/listings.json",
     ],
     "us_undergrad_only": True,
+    "min_intern_year": 2027,
     "lookback_days": 400,
     "dashboard_port": 5050,
 }
