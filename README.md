@@ -55,11 +55,22 @@ powershell -ExecutionPolicy Bypass -File scripts\uninstall_scheduler.ps1
 ## Daily use
 
 ### Open the dashboard
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\start_dashboard.ps1
-```
-Then open **http://127.0.0.1:5050** in your browser. The "Scan now" button kicks
-off a fresh scrape on demand; otherwise it reflects the latest 6-hourly scan.
+
+Two ways to view it:
+
+- **As a desktop app (no browser)** — double-click **`Start Dashboard (App).bat`**.
+  It opens the dashboard in a native window using `pywebview` (Windows WebView2).
+  Requires the one-time `pip install -r requirements.txt` (which now includes
+  `pywebview`). Closing the window quits it.
+- **In your browser** — double-click **`Start Dashboard.bat`**, or run:
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File scripts\start_dashboard.ps1
+  ```
+  then open **http://127.0.0.1:5050**.
+
+Either way, the "Scan now" button kicks off a fresh scrape on demand; otherwise the
+view reflects the latest 6-hourly scan. (If the desktop window ever fails to open,
+run `py desktop.py` from a terminal to see the error.)
 
 ### Run a scan by hand
 ```powershell
@@ -119,6 +130,9 @@ src/
 dashboard/
   app.py                 # Flask dashboard server
   templates/index.html   # the dashboard UI
+desktop.py               # native-window launcher (pywebview, no browser)
+Start Dashboard (App).bat  # double-click: open as a desktop app
+Start Dashboard.bat        # double-click: open in your browser
 scripts/
   run_scan.ps1           # run one scan (Task Scheduler calls this)
   start_dashboard.ps1    # launch the dashboard

@@ -1,2 +1,6 @@
 requests>=2.31
 flask>=3.0
+
+# Optional — only for the native desktop window (desktop.py / "Start Dashboard (App).bat").
+# The browser-based dashboard works without it.
+pywebview>=5.0
